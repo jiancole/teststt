@@ -4,7 +4,7 @@ const { resolve } = require("path");
 
 module.exports = {
 	config: {
-		name: "sendnoti",
+		name: "release",
 		version: "1.4",
 		author: "cliff",
 		countDown: 5,
