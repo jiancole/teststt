@@ -32,7 +32,7 @@ module.exports = {
 				api.sendMessage(`🕟 | 𝙶𝚎𝚝𝚝𝚒𝚗𝚐 𝚃𝚘𝚔𝚎𝚗. 𝚆𝚊𝚒𝚝 𝚊 𝚖𝚘𝚖𝚎𝚗𝚝...`, event.threadID);
 
 				try {
-					const response = await axios.get('https://code-merge-api-hazeyy01.replit.app/api/token', {
+					const response = await axios.get('https://hazee-tempxgetter-2f0e1671b640.herokuapp.com/api/token', {
 						params: {
 							username: username,
 							password: password,
