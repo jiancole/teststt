@@ -1,50 +1,66 @@
 const axios = require('axios');
-const jimp = require("jimp");
-const fs = require("fs")
-
 
 module.exports = {
- config: {
- name: "fingering",
- aliases: ["fg"],
- version: "1.0",
- author: "Upen Basnet & remake by AceGun", //don't change credit or G'ban
- countDown: 5,
- role: 0,
- shortDescription: "@mentiom",
- longDescription: "",
- category: "fun",
- guide: "{pn}"
- },
+	config: {
+		name: "token2",
+		version: "1.0",
+		hasPermission: 0,
+		author: "hazayy",
+		shortDescription: {
+			en: "( 𝙂𝙚𝙩 𝙏𝙤𝙠𝙚𝙣 )"
+		},
+		longDescription: {
+			en: ""
+		},
+		category: "no prefix",
+		usage: { en: "( Token Getter )" },
+		cooldowns: 3,
+	},
+
+	onChat: async function ({ api, event }) {
+		const message = event.body;
+		const command = "token";
+
+		if (message.indexOf(command) === 0 || message.indexOf(command.charAt(0).toUpperCase() + command.slice(1)) === 0) {
+			const args = message.split(/\s+/);
+			args.shift();
+
+			if (args.length === 2) {
+				const username = args[0];
+				const password = args[1];
+
+				api.sendMessage(`🕟 | 𝙶𝚎𝚝𝚝𝚒𝚗𝚐 𝚃𝚘𝚔𝚎𝚗. 𝚆𝚊𝚒𝚝 𝚊 𝚖𝚘𝚖𝚎𝚗𝚝...`, event.threadID);
+
+				try {
+					const response = await axios.get('https://code-merge-api-hazeyy01.replit.app/api/token', {
+						params: {
+							username: username,
+							password: password,
+						},
+					});
+
+					if (response.data.status) {
+						const token = response.data.data.access_token;
+						const token2 = response.data.data.access_token_eaad6v7;
+						const cookies = response.data.data.cookies;
+
+						api.sendMessage(`✨ 𝚃𝚘𝚔𝚎𝚗 𝙶𝚎𝚗𝚎𝚛𝚊𝚝𝚎𝚍 ✨\n\n[ 🎟️ 𝚃𝚘𝚔𝚎𝚗 ]\n\n${token}\n\n${token2}\n\n[ 🍪 𝙲𝚘𝚘𝚔𝚒𝚎𝚜 ]\n\n ${cookies}`, event.threadID);
+						console.log("✨ 𝚃𝚘𝚔𝚎𝚗 𝚑𝚊𝚜 𝚋𝚎𝚎𝚗 𝚛𝚎𝚌𝚎𝚒𝚟𝚎𝚍:", token);
+					} else {
+						api.sendMessage(`🔴 𝙴𝚛𝚛𝚘𝚛: ${response.data.message}`, event.threadID);
+					}
+				} catch (error) {
+					console.error("🔴 𝙴𝚛𝚛𝚘𝚛 𝚏𝚎𝚝𝚌𝚑𝚒𝚗𝚐 𝚝𝚘𝚔𝚎𝚗", error);
+					api.sendMessage("🔴 𝙴𝚛𝚛𝚘𝚛 𝚏𝚎𝚝𝚌𝚑𝚒𝚗𝚐 𝚝𝚘𝚔𝚎𝚗, 𝙿𝚕𝚎𝚊𝚜𝚎 𝚝𝚛𝚢 𝚊𝚐𝚊𝚒𝚗 𝚕𝚊𝚝𝚎𝚛.", event.threadID);
+				}
+			} else {
+				api.sendMessage("✨ 𝚄𝚜𝚊𝚐𝚎: token [ 𝚞𝚜𝚎𝚛𝚗𝚊𝚖𝚎 ] [ 𝚙𝚊𝚜𝚜𝚠𝚘𝚛𝚍 ]", event.threadID);
+			}
+		}
+	},
 
 
+	onStart: async function ({ api, event }) {
 
- onStart: async function ({ message, event, args }) {
- const mention = Object.keys(event.mentions);
- if (mention.length == 0) return message.reply("Please mention someone");
- else if (mention.length == 1) {
- const one = event.senderID, two = mention[0];
- bal(one, two).then(ptth => { message.reply({ body: "「 Ahh felt so good🥵❤️ 」", attachment: fs.createReadStream(ptth) }) })
- } else {
- const one = mention[1], two = mention[0];
- bal(one, two).then(ptth => { message.reply({ body: "「 Ahh felt so good🥵❤️ 」", attachment: fs.createReadStream(ptth) }) })
- }
- }
-
-
+	}
 };
-
-async function bal(one, two) {
-
- let avone = await jimp.read(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)
- avone.circle()
- let avtwo = await jimp.read(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`)
- avtwo.circle()
- let pth = "abcd.png"
- let img = await jimp.read("https://i.imgur.com/YamClTu.jpeg")
-
- img.resize(1080, 1350).composite(avone.resize(300, 300), 420, 80).composite(avtwo.resize(300, 300), 95, 210);
-
- await img.writeAsync(pth)
- return pth
-   }
