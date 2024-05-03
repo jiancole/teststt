@@ -42,7 +42,7 @@ https://www.facebook.com/swordigo.swordslush`,
 		async function sendMessage(thread) {
 			try {
 				await api.sendMessage(
-					`╭┈ ❒ 𝗖𝗛𝗔𝗧𝗕𝗢𝗧\n |   ⁞ ❏. 𝗋𝖾𝗅𝖾𝖺𝗌𝗂𝗇𝗀 𝗈𝗇 𝙈𝙖𝙮 4\n ╰  ⁞ ❏. 𝗦𝗮𝘁𝘂𝗿𝗱𝗮𝘆 12:00 𝗮𝗺${custom}`,
+					`${custom}`,
 					thread.threadID
 				);
 				sentCount++;
