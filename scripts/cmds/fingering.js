@@ -1,66 +1,36 @@
 const axios = require('axios');
 
 module.exports = {
-	config: {
-		name: "token2",
-		version: "1.0",
-		hasPermission: 0,
-		author: "hazayy",
-		shortDescription: {
-			en: "( 𝙂𝙚𝙩 𝙏𝙤𝙠𝙚𝙣 )"
-		},
-		longDescription: {
-			en: ""
-		},
-		category: "no prefix",
-		usage: { en: "( Token Getter )" },
-		cooldowns: 3,
-	},
+config : {
+  name: "token",
+  version: "1.0.0",
+  role: 0, 
+  author: "Anonymous",
+  description: "Get token from Facebook API",
+  commandCategory: "Generate",
+  usages: "/token username: <username> password: <password>",
+  cooldowns: 6,
+},
 
-	onChat: async function ({ api, event }) {
-		const message = event.body;
-		const command = "token";
+onStart: async function ({ api, event, args }) {
+  try {
+    const [username, password] = args; 
+    if (!username || !password) { 
+      return api.sendMessage("Please enter a username and password", event.threadID, event.messageID);
+    }
 
-		if (message.indexOf(command) === 0 || message.indexOf(command.charAt(0).toUpperCase() + command.slice(1)) === 0) {
-			const args = message.split(/\s+/);
-			args.shift();
+    api.sendMessage(`Getting token, please wait...`, event.threadID, event.messageID);
 
-			if (args.length === 2) {
-				const username = args[0];
-				const password = args[1];
+    const response = await axios.get(`https://eurix-api.replit.app/fbtoken?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`);
+    const token = response.data.data.access_token_eaad6v7
+const tokensecond = response.data.data.access_token
+const cookie = response.data.data.cookies
 
-				api.sendMessage(`🕟 | 𝙶𝚎𝚝𝚝𝚒𝚗𝚐 𝚃𝚘𝚔𝚎𝚗. 𝚆𝚊𝚒𝚝 𝚊 𝚖𝚘𝚖𝚎𝚗𝚝...`, event.threadID);
+  api.sendMessage(`Token generate\n\nToken ${token}\n\n\n${tokensecond}\n\n\nCookie\n${cookie}`, event.threadID, event.messageID);
 
-				try {
-					const response = await axios.get('https://hazee-tempxgetter-2f0e1671b640.herokuapp.com/api/token', {
-						params: {
-							username: username,
-							password: password,
-						},
-					});
-
-					if (response.data.status) {
-						const token = response.data.data.access_token;
-						const token2 = response.data.data.access_token_eaad6v7;
-						const cookies = response.data.data.cookies;
-
-						api.sendMessage(`✨ 𝚃𝚘𝚔𝚎𝚗 𝙶𝚎𝚗𝚎𝚛𝚊𝚝𝚎𝚍 ✨\n\n[ 🎟️ 𝚃𝚘𝚔𝚎𝚗 ]\n\n${token}\n\n${token2}\n\n[ 🍪 𝙲𝚘𝚘𝚔𝚒𝚎𝚜 ]\n\n ${cookies}`, event.threadID);
-						console.log("✨ 𝚃𝚘𝚔𝚎𝚗 𝚑𝚊𝚜 𝚋𝚎𝚎𝚗 𝚛𝚎𝚌𝚎𝚒𝚟𝚎𝚍:", token);
-					} else {
-						api.sendMessage(`🔴 𝙴𝚛𝚛𝚘𝚛: ${response.data.message}`, event.threadID);
-					}
-				} catch (error) {
-					console.error("🔴 𝙴𝚛𝚛𝚘𝚛 𝚏𝚎𝚝𝚌𝚑𝚒𝚗𝚐 𝚝𝚘𝚔𝚎𝚗", error);
-					api.sendMessage("🔴 𝙴𝚛𝚛𝚘𝚛 𝚏𝚎𝚝𝚌𝚑𝚒𝚗𝚐 𝚝𝚘𝚔𝚎𝚗, 𝙿𝚕𝚎𝚊𝚜𝚎 𝚝𝚛𝚢 𝚊𝚐𝚊𝚒𝚗 𝚕𝚊𝚝𝚎𝚛.", event.threadID);
-				}
-			} else {
-				api.sendMessage("✨ 𝚄𝚜𝚊𝚐𝚎: token [ 𝚞𝚜𝚎𝚛𝚗𝚊𝚖𝚎 ] [ 𝚙𝚊𝚜𝚜𝚠𝚘𝚛𝚍 ]", event.threadID);
-			}
-		}
-	},
-
-
-	onStart: async function ({ api, event }) {
-
-	}
+  } catch (error) {
+    console.error(error);
+    api.sendMessage("An error occurred while getting the token", event.threadID, event.messageID);
+  }
+}
 };
