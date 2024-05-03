@@ -22,13 +22,12 @@ async function getStreamAndSize(url, path = "") {
 
 module.exports = {
 	config: {
-		name: "ytb",
-		version: "1.15",
-		author: "NTKhang",
+		name: "v5",
+		version: "1.16",
+		author: "oh",
 		countDown: 5,
 		role: 0,
-		shortDescription: "YouTube",
-		longDescription: {
+		description: {
 			vi: "Tải video, audio hoặc xem thông tin video trên YouTube",
 			en: "Download video, audio or view video information on YouTube"
 		},
@@ -68,21 +67,19 @@ module.exports = {
 		en: {
 			error: "❌ An error occurred: %1",
 			noResult: "⭕ No search results match the keyword %1",
-			choose: "%1Reply to the message with a number to choose or any content to cancel",
+			choose: "%1Reply to the message with a number to choose or any content to cancel\nCHATBOTV5",
 			video: "video",
 			audio: "audio",
-			downloading: "⬇️ Downloading %1 \"%2\"",
-			downloading2: "⬇️ Downloading %1 \"%2\"\n🔃 Speed: %3MB/s\n⏸️ Downloaded: %4/%5MB (%6%)\n⏳ Estimated time remaining: %7 seconds",
+			downloading: "⏳ | Downloading %1 \"%2\"",
+			downloading2: "⏳ | Downloading %1 \"%2\"\n🔃 Speed: %3MB/s\n⏸️ Downloaded: %4/%5MB (%6%)\n⏳ Estimated time remaining: %7 seconds",
 			noVideo: "⭕ Sorry, no video was found with a size less than 83MB",
 			noAudio: "⭕ Sorry, no audio was found with a size less than 26MB",
 			info: "💠 Title: %1\n🏪 Channel: %2\n👨‍👩‍👧‍👦 Subscriber: %3\n⏱ Video duration: %4\n👀 View count: %5\n👍 Like count: %6\n🆙 Upload date: %7\n🔠 ID: %8\n🔗 Link: %9",
-			listChapter: "\n📖 List chapter: %1\n",
-			loading: "test"
+			listChapter: "\n📖 List chapter: %1\n"
 		}
 	},
 
-	onStart: async function ({ args, message, event, commandName, getLang, api }) {
-
+	onStart: async function ({ args, message, event, commandName, getLang }) {
 		let type;
 		switch (args[0]) {
 			case "-v":
@@ -129,11 +126,12 @@ module.exports = {
 		let i = 1;
 		const thumbnails = [];
 		const arrayID = [];
+
 		for (const info of result) {
 			thumbnails.push(getStreamFromURL(info.thumbnail));
 			msg += `${i++}. ${info.title}\nTime: ${info.time}\nChannel: ${info.channel.name}\n\n`;
-	
-	}
+		}
+
 		message.reply({
 			body: getLang("choose", msg),
 			attachment: await Promise.all(thumbnails)
@@ -144,8 +142,7 @@ module.exports = {
 				author: event.senderID,
 				arrayID,
 				result,
-				type,
-			
+				type
 			});
 		});
 	},
@@ -169,7 +166,7 @@ async function handle({ type, infoVideo, message, getLang }) {
 	const { title, videoId } = infoVideo;
 
 	if (type == "video") {
-		const MAX_SIZE = 200 * 1024 * 1024; // 83MB (max size of video that can be sent on fb)
+		const MAX_SIZE = 83 * 1024 * 1024; // 83MB (max size of video that can be sent on fb)
 		const msgSend = message.reply(getLang("downloading", getLang("video"), title));
 		const { formats } = await ytdl.getInfo(videoId);
 		const getFormat = formats
