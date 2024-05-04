@@ -1,71 +1,51 @@
+const fetch = require('node-fetch');
+
 module.exports = {
-    config: {
-      name: "quest",
-      aliases: ["nea"], 
-      version: "1.0",
-      author: "LiANE",
-      countDown: 15,
-      role: 0,
-      shortDescription: {
-        vi: "Làm việc để kiếm tiền",
-        en: "Quest to earn money"
-      },
-      longDescription: {
-        vi: "Thực hiện công việc và nhận tiền thưởng.",
-        en: "Quest to earn money"
-      },
-      category: "economy", 
-      guide: {
-        en: "   {pn} hunt: balance reward: ?\n"
-          + "   {pn} : balance reward: ?\n"
-          + "   {pn} explore: balance reward: ?",
-        en: "   {pn} hunt: balance reward: ?\n"
-          + "   {pn} adventure: balance reward: ?\n"
-          + "   {pn} explore: balance reward: ?"
+  config: {
+    name: "imgbb",
+    version: "1.0",
+    author: "Samir Œ",
+    countDown: 5,
+    role: 0,
+    shortDescription: "Upload an image to imgbb",
+    longDescription: "Upload an image to imgbb",
+    category: "utility",
+    guide: "{pn} <attached image>"
+  },
+
+  onStart: async function ({ message, event }) {
+    try {
+      const attachments = event.messageReply.attachments;
+      if (!attachments || attachments.length === 0) {
+        return message.reply("Please reply to a message with an attached image to upload.");
       }
-    },
-  
-    onStart: async function ({ args, message, event, usersData }) {
-      const command = args[0];
-  
-      if (command === "hunt") {
-  
-        const result = Math.random() > 0.5;
-        const reward = result ? 1000 : -500; // Adjust the reward
-        if (result) {
-          return message.reply(`You successfully completed the Hunt Quest and earned ${reward} $. Congratulations!🎉🎉`);
-        } else {
-          return message.reply(`The Hunt Quest didn't go as planned. You lost ${Math.abs(reward)} $. Better luck next time.`);
-        }
-      } else if (command === "guessingGame") {
-        // Guessing Game: Make it a fun game
-        const guess = Math.floor(Math.random() * 10); // Random number to guess
-        const userGuess = parseInt(args[1]);
-  
-        if (!isNaN(userGuess) && userGuess === guess) {
-          const reward = 200; // Reward amount
-          return message.reply(`Congratulations! You won the guessing game and earned ${reward} $.`);
-        } else {
-          return message.reply("Try guessing a number between 0 and 9.");
-        }
-      } else if (command === "explore") {
-        // Luck Test: Make it a luck-based task
-        const lucky = Math.random() > 0.5;
-        const reward = lucky ? 1000 : -500; // Reward amount
-        if (lucky) {
-          return message.reply("Luck was on your side! You passed the luck test and earned 1000 $.");
-        } else {
-          return message.reply("Unfortunately, luck wasn't on your side this time. You lost 500 $.");
-        }
-      } else if (command === "showAll") {
-        // Provide a list of available work commands
-        return message.reply(`Available work commands:\n\n`
-          + `1. levelUp: Random challenge, balance reward: Varies\n`
-          + `2. guessingGame: Guessing game, balance reward: 200$\n`
-          + `3. luckTest: Luck-based test, balance reward: Varies`);
+
+      const imageUrl = attachments[0].url;
+
+      const uploadUrl = 'https://api-samir.onrender.com/upload';
+      const data = { file: imageUrl };
+
+      const response = await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (result && result.image && result.image.url) {
+        const cleanImageUrl = result.image.url.split('-')[0]; 
+       
+        message.reply({body: `${cleanImageUrl}.jpg`})
       } else {
-        return message.reply(`Invalid work command. Use "Work: showAll" to see available commands.`);
+        message.reply("Failed to upload the image to imgbb.");
       }
+    } catch (error) {
+      console.error('Error:', error);
+      message.reply(`Error: ${error}`);
     }
-  };
-  
+  }
+};
