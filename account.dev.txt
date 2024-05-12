@@ -156,7 +156,7 @@
     },
     {
         "domain": ".facebook.com",
-        "expirationDate": 1716092770,
+        "expirationDate": 1716094062,
         "hostOnly": false,
         "httpOnly": false,
         "name": "wd",
